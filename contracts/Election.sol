@@ -1,10 +1,18 @@
 pragma solidity >=0.4.22 <0.8.0;
 
+import "./Candidate.sol";
+
 contract Election {
     address public owner = msg.sender;
     uint public last_completed_migration;
 
-    string name;
+    enum State {Applications, Vote, Finished}
+
+    struct Election {
+        string name;
+        State state;
+        Candidate[] candidates;
+    }
 
 
     modifier restricted() {
