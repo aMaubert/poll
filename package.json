@@ -1,0 +1,15 @@
+{
+  "name": "smart-contracts",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "truffle compile && truffle migrate --network development",
+    "prestart": "ganache-cli -p 8545 &",
+    "install": "npm truffle ganache-cli",
+    "pretest": "ganache-cli -p 8545 &",
+    "test": "truffle compile && truffle test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0"
+  }
+}
