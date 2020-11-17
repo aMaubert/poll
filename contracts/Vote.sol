@@ -1,6 +1,7 @@
 pragma solidity ^0.4.0;
 
 import "./Note.sol";
+import "./Candidate.sol";
 
 contract Vote {
     mapping (address => bool) hasOwnerVoted;
