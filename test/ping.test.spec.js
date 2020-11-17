@@ -9,7 +9,6 @@ contract('Poll contract', (accounts) => {
     })
 
     it('Should return pong', async () => {
-
         const result = await contractInstance.pingTest();
         assert.equal(result, 'Pong');
     })
