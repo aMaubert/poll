@@ -1,13 +1,13 @@
-pragma solidity ^0.4.0;
+pragma solidity >=0.4.22 <0.8.0;
 
 import "./Note.sol";
-import "./Candidate.sol";
 
-contract Vote {
+contract Vote is Note {
     mapping (address => bool) hasOwnerVoted;
+
     struct Vote{
         address voter_address;
-        mapping (Candidate => Note) example;
+        mapping (address => uint) ballot; // L'adresse correspond à l'id du candidat et le uint à la note associée
     }
 
     modifier hasVoted(){
@@ -15,8 +15,9 @@ contract Vote {
         _;
     }
 
-    function _createVote(Note _note) private hasVoted returns(Vote){
+    // Signature de la méthode à revoir : Note ou uint[] ? => Il faudra se mettre d'accord avec ce qu'on recevra du front.
+    function _createVote(Note memory _note) private hasVoted returns(Vote memory){
         hasOwnerVoted[msg.sender] = true;
-        return Vote(msg.sender, _note);
+        return Vote(msg.sender);
     }
 }
