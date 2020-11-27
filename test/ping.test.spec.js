@@ -12,6 +12,11 @@ contract('Poll contract', (accounts) => {
         const result = await contractInstance.pingTest();
         assert.equal(result, 'Pong');
     })
+
+    it('Should return float', async () => {
+        const result = await contractInstance.floatTest(20, 3);
+        assert.equal(result, 666);
+    })
 })
 
 

@@ -4,7 +4,6 @@
   "scripts": {
     "start": "truffle compile && truffle migrate --network development",
     "prestart": "ganache-cli -p 8545 &",
-    "install": "npm truffle ganache-cli",
     "test": "concurrently \"ganache-cli -p 8545 \" \"truffle compile && truffle test\""
   },
   "dependencies": {},
