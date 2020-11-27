@@ -7,6 +7,10 @@ contract Election {
     address public owner = msg.sender;
     uint public last_completed_migration;
 
+    // Events à utiliser pour le front :
+    //event ElectionAdded(Election election); // Ou string name ?
+    event ElectionAdded(string name);
+
     /*
         Pour le front : - Une méthode qui retourne toutes les élections pour laquelle a voté une adresse
                         - Une méthode getElection(id)
@@ -16,7 +20,7 @@ contract Election {
     enum State {Applications, Vote, Results}
 
     struct Election {
-        // Add ID handled manually ?
+        uint id;
         string name;
         State state;
         Candidate[] candidates;
@@ -39,13 +43,15 @@ contract Election {
         last_completed_migration = completed;
     }
 
-    function _createElection(string memory _electionName) public {
+    function createElection(string memory _electionName) public {
         Candidate[] memory tmpCandidate; // Variables temporaires pour pouvoir retourner une liste de structures vide.
         Vote[] memory tmpVote;
-        elections.push(Election(_electionName, State.Applications, tmpCandidate, tmpVote));
+        Election memory election = Election(_getUniqueId(), _electionName, State.Applications, tmpCandidate, tmpVote);
+        emit ElectionAdded(_electionName);
+        elections.push(election);
     }
 
-    function _addCandidate(Candidate _candidate, string memory _electionName) public {
+    function addCandidate(Candidate _candidate, string memory _electionName) public {
         for (uint i = 0; i < elections.length; i++) {
             // On compare les deux chaines de caractères (l'une est de type stockage et l'autre memory)
             if(keccak256(abi.encodePacked(elections[i].name)) == keccak256(abi.encodePacked(_electionName))) {
@@ -55,7 +61,7 @@ contract Election {
     }
 
     // On récupère la liste des candidats d'une élection pour un vote.
-    function _getCandidatesForElection(string memory _electionName) public restricted returns(Candidate[] memory) {
+    function getCandidatesForElection(string memory _electionName) public restricted returns(Candidate[] memory) {
         for (uint i = 0; i < elections.length; i++) {
             if(keccak256(abi.encodePacked(elections[i].name)) == keccak256(abi.encodePacked(_electionName))) {
                 return elections[i].candidates;
@@ -65,7 +71,7 @@ contract Election {
         return tmpCandidate;
     }
 
-    function _nextStep(string memory _electionName) public restricted {
+    function nextStep(string memory _electionName) public restricted {
         for(uint i = 0; i < elections.length; i++) {
             if(keccak256(abi.encodePacked(elections[i].name)) == keccak256(abi.encodePacked(_electionName))) {
                 if(elections[i].state == State.Applications) {
@@ -77,7 +83,7 @@ contract Election {
         }
     }
 
-    function getUniqueId() public view returns (uint)
+    function _getUniqueId() private view returns (uint)
     {
         bytes20 b = bytes20(keccak256(abi.encodePacked(msg.sender, now)));
         uint addr = 0;
