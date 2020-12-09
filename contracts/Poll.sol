@@ -4,6 +4,11 @@ pragma solidity >=0.4.22 <0.8.0;
 import "./Election.sol";
 import "./CalculUtils.sol";
 
+    /*
+        Pour le back : -
+
+    */
+
 contract Poll is Election, Vote, CalculUtils, Candidate {
   address public owner = msg.sender;
   uint public last_completed_migration;
