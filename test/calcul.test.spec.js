@@ -8,7 +8,7 @@ contract('Poll contract', (accounts) => {
         contractInstance = await Poll.new();
     })
 
-    it('Divide(5,2,2) Should return 2,50', async () => {
+    /*it('Divide(5,2,2) Should return 2,50', async () => {
         const result = await contractInstance.divide(5,2,2);
         console.log({result});
         assert.equal(result, "2,50");
@@ -18,6 +18,6 @@ contract('Poll contract', (accounts) => {
         const result = await contractInstance.formatStringNumber("250",2);
         console.log({result});
         assert.equal(result, "2,50");
-    })
+    })*/
 
 })

@@ -2,20 +2,25 @@ pragma solidity >=0.4.22 <0.8.0;
 
 import "./Candidate.sol";
 import "./Vote.sol";
+import "./Poll.sol";
 
-contract Election {
+contract Election is Poll {
     address public owner = msg.sender;
     uint public last_completed_migration;
 
     // Events à utiliser pour le front :
     //event ElectionAdded(Election election); // Ou string name ?
     event ElectionAdded(string name);
+    event CandidateAdded(string name);
+    event ChangeState(State state);
 
     /*
         Pour le front : - Une méthode qui retourne toutes les élections pour laquelle a voté une adresse
                         - Une méthode getElection(id)
     */
     mapping (address => Vote[]) getElectionsVoted;
+
+
 
     enum State {Applications, Vote, Results}
 
@@ -56,6 +61,17 @@ contract Election {
             // On compare les deux chaines de caractères (l'une est de type stockage et l'autre memory)
             if(keccak256(abi.encodePacked(elections[i].name)) == keccak256(abi.encodePacked(_electionName))) {
                 elections[i].candidates.push(_candidate);
+                // Handle getCandidateName(candidate.name)
+                //emit CandidateAdded(_candidate.name);
+            }
+        }
+    }
+
+    function addVote(Vote _vote, string memory _electionName) public {
+        for (uint i = 0; i < elections.length; i++) {
+            // On compare les deux chaines de caractères (l'une est de type stockage et l'autre memory)
+            if(keccak256(abi.encodePacked(elections[i].name)) == keccak256(abi.encodePacked(_electionName))) {
+                elections[i].votes.push(_vote);
             }
         }
     }
@@ -76,11 +92,25 @@ contract Election {
             if(keccak256(abi.encodePacked(elections[i].name)) == keccak256(abi.encodePacked(_electionName))) {
                 if(elections[i].state == State.Applications) {
                     elections[i].state = State.Vote;
+                    emit ChangeState(elections[i].state);
                 } else if(elections[i].state == State.Vote){
                     elections[i].state = State.Results;
+                    emit ChangeState(elections[i].state);
                 }
             }
         }
+    }
+
+    function calculateResult(uint _idElection) public restricted returns (Candidate) {
+        for(uint i = 0; i < elections.length; i++) {
+            if(elections[i].id == _idElection) {
+                if(elections[i].state == State.Results) {
+                    // TODO : Logique de calcul des résultats à mettre en place.
+                    return elections[i].candidates[0];
+                }
+            }
+        }
+        return elections[0].candidates[0];
     }
 
     function _getUniqueId() private view returns (uint)
