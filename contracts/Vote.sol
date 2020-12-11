@@ -5,7 +5,7 @@ contract Vote {
 
     struct Vote{
         address voter_address;
-        mapping (address => uint) ballot; // L'adresse correspond à l'id du candidat et le uint à la note associée
+        mapping (address => uint8) ballot; // L'adresse correspond à l'id du candidat et le uint à la note associée
     }
 
     modifier hasVoted(){
@@ -15,6 +15,8 @@ contract Vote {
 
     function _createVote(uint8 _note) private hasVoted returns(Vote memory){
         hasOwnerVoted[msg.sender] = true;
+        // call addVote(newVote, idElection)
+        // remove return
         return Vote(msg.sender);
     }
 }

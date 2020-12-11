@@ -18,6 +18,15 @@ contract Election is Poll {
         Pour le front : - Une méthode qui retourne toutes les élections pour laquelle a voté une adresse
                         - Une méthode getElection(id)
     */
+
+    /*
+        Pour le back : - ajouter un vote à une election
+                       - calculer la moyenne d'un candidat
+                       - event au front pour changement etat
+                       - event au front à l'ajout d'un candidat
+    */
+
+
     mapping (address => Vote[]) getElectionsVoted;
 
 
