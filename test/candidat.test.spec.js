@@ -1,15 +1,12 @@
-const Candidate = artifacts.require('Candidate');
+const Poll = artifacts.require('Poll');
 
 contract('Candidat contract', (accounts) => {
     let [alice, bob] = accounts;
     let contractInstance ;
 
     beforeEach( async () => {
-        contractInstance = await Candidate.new();
+        contractInstance = await Poll.new();
     })
 
-    it('Should return coucou', async () => {
-        const result = await contractInstance.coucouTest();
-        assert.equal(result, 'coucou');
-    })
+
 })

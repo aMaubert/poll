@@ -1,11 +1,11 @@
-const Note = artifacts.require('Note');
+const Note = artifacts.require('Poll');
 
-contract('Note', (accounts) => {
+contract('Poll', (accounts) => {
     let [alice, bob] = accounts;
     let contractInstance;
 
     beforeEach( async () => {
-        contractInstance = await Note.new(10);
+        contractInstance = await Poll.new(10);
     })
 
     /*it('New Note(10) should return Level.LEVEL3', async () => {

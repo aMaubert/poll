@@ -1,6 +1,7 @@
 pragma solidity >=0.4.22 <0.8.0;
 
 contract CalculUtils {
+
     function divide(uint a, uint b, uint precision) public pure returns (string memory) {
         uint result =  a * (10**precision) / b;
         string memory resultString =  integerToString(result);

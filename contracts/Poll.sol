@@ -1,11 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.8.0;
+pragma experimental ABIEncoderV2;
 
-import "./Election.sol";
-import "./CalculUtils.sol";
+import "./CandidateHelper.sol";
+import "./Ping.sol";
 
-contract Poll {
+
+contract Poll is CandidateHelper, Ping {
+
   address public owner = msg.sender;
+
   uint public last_completed_migration;
 
   modifier restricted() {
@@ -19,16 +23,5 @@ contract Poll {
   function setCompleted(uint completed) public restricted {
     last_completed_migration = completed;
   }
-
-  function pingTest() public pure returns (string memory) {
-    string memory pong =  "Pong";
-    return pong;
-  }
-
-  function floatTest(uint a, uint b) public pure returns (uint) {
-    if (b != 0)
-      return (a * 100) / b ;
-    else
-      return 0;
-  }
+  
 }
