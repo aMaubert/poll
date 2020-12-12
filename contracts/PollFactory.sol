@@ -24,6 +24,26 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
                        - event au front à l'ajout d'un candidat
     */
 
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier electionOwner(uint electionID) {
+        require(
+            msg.sender == electionToOwner[electionID],
+            "This function is restricted to the election's owner"
+        );
+        _;
+    }
+
+    struct Election {
+        uint256 id;
+        string name;
+        ElectionState state;
+        mapping(uint => Candidate) candidates;
+        uint candidatesSize;
+        mapping(uint => Vote) votes;
+    }
+
     Election[] public elections;
 
     enum ElectionState { APPLICATION, VOTE, RESULTS}
@@ -34,35 +54,19 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
 
     mapping(address => Election) public participated;
 
-    mapping(uint => address) public electionsOwner;
+    mapping(uint256 => address) public electionToOwner;
 
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier electionOwner(uint electionID) {
-        require(
-            msg.sender == electionsOwner[electionID],
-            "This function is restricted to the election's owner"
-        );
-        _;
-    }
-
-    struct Election {
-        uint id;
-        string name;
-        ElectionState state;
-        Candidate[] candidates;
-        Vote[] votes;
-    }
-
+    //TODO implement this
     function createElection(string memory _electionName) public {
-//        Election storage election = elections[0];
-//        election.id = _getUniqueId();
-//        election.name = _electionName;
-//        electionsOwner[election.id] = msg.sender;
-        emit ElectionAdded(1,_electionName);
+        uint electionID =  generateUniqueId();
+        Election memory newElection = Election({id:electionID, name :_electionName, state: ElectionState.APPLICATION, candidatesSize: 1  });
+        elections.push( newElection ) ;
+        elections[0].candidates[newElection.candidatesSize] =  Candidate( "frzr", "fezgzr",msg.sender);
+        electionToOwner[electionID] = msg.sender;
+        emit ElectionAdded(electionID,_electionName);
     }
 
+    //TODO test
     function nextStep(uint _idElection) public electionOwner(_idElection) {
         for(uint i = 0; i < elections.length; i++) {
             if(elections[i].id == _idElection) {

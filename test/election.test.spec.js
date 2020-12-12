@@ -13,6 +13,11 @@ contract('Poll contract', (accounts) => {
         const electionName = "Election 1";
         const result = await contractInstance.createElection(electionName);
         truffleAssert.eventEmitted(result, 'ElectionAdded', (event) => {
+            console.log({id: event.id});
+            contractInstance.fetchElectionByID(event.id)
+                .then(res => {
+                    console.log({res: res[3]});
+                });
             return event.id && event.name === electionName ;
         });
     })
