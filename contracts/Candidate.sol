@@ -9,17 +9,19 @@ contract Candidate {
 
     // Events à utiliser pour le front :
     //event CandidateAdded(Candidate candidate); // Ou string name, string firstName ?
-    event CandidateAdded(string name, string firstName);
+    event CandidateAdded(string name, string firstName, uint8[5] scores);
 
     struct Candidate {
         string name;
         string firstName;
         address candidateAddress;
+        uint8[5] scores;
     }
 
     function _createCandidate(string memory _name, string memory _firstName) private returns(Candidate memory){
-        Candidate memory candidate = Candidate(_name, _firstName, msg.sender);
-        emit CandidateAdded(_name, _firstName);
+        uint8[5] memory scores = [0, 0, 0, 0, 0];
+        Candidate memory candidate = Candidate(_name, _firstName, msg.sender, scores);
+        emit CandidateAdded(_name, _firstName, scores);
         return candidate;
     }
 
