@@ -7,6 +7,7 @@ contract VoteFactory {
 
     struct Vote{
         address voter_address;
+        uint ballotCount;
         mapping (address => uint8) ballot;      // Un vote correspond à l'adresse du Candidate et des notes.
     }
 

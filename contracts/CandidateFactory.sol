@@ -1,5 +1,6 @@
 pragma solidity >=0.4.22 <0.8.0;
 
+
 contract CandidateFactory {
 
     /*
@@ -15,12 +16,6 @@ contract CandidateFactory {
         string name;
         string firstName;
         address candidateAddress;
-    }
-
-    //TODO implement the test
-    function addCandidate(uint electionID, string memory _name, string memory _firstName) public {
-        Candidate memory candidate = Candidate(_name, _firstName, msg.sender);
-        emit CandidateAdded(_name, _firstName);
     }
 
 }

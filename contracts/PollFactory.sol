@@ -39,12 +39,15 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
         uint256 id;
         string name;
         ElectionState state;
+        uint candidateCount;
+        uint voteCount;
         mapping(uint => Candidate) candidates;
-        uint candidatesSize;
         mapping(uint => Vote) votes;
     }
 
-    Election[] public elections;
+    mapping(uint => Election) public elections;
+
+    uint256 public electionCount;
 
     enum ElectionState { APPLICATION, VOTE, RESULTS}
 
@@ -56,29 +59,63 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
 
     mapping(uint256 => address) public electionToOwner;
 
+    constructor() public {
+        electionCount = 0;
+    }
+
+    event printNumber(uint);
+    event printElection(uint256, string, ElectionState);
+    event candidateAdded(string, string, address);
+
+
+
     //TODO implement this
     function createElection(string memory _electionName) public {
-        uint electionID =  generateUniqueId();
-        Election memory newElection = Election({id:electionID, name :_electionName, state: ElectionState.APPLICATION, candidatesSize: 1  });
-        elections.push( newElection ) ;
-        elections[0].candidates[newElection.candidatesSize] =  Candidate( "frzr", "fezgzr",msg.sender);
-        electionToOwner[electionID] = msg.sender;
-        emit ElectionAdded(electionID,_electionName);
+        elections[electionCount] = Election(electionCount, _electionName, ElectionState.APPLICATION, 0, 0);
+
+        addCandidate(electionCount, "Allan", "Maubert");
+//        elections[electionCount].candidates[elections[electionCount].candidateCount] =  Candidate("Allan", "Maubert",msg.sender);
+//        elections[electionCount].candidateCount++;
+//        Election storage election = elections[0];
+//        emit printNumber(election.candidateCount);
+//        for(uint i = 0; i < election.candidateCount; i++) {
+//            Candidate storage candidate = election.candidates[i];
+//            emit candidateAdded(
+//                candidate.name,
+//                candidate.firstName,
+//                candidate.candidateAddress
+//            );
+//        }
+
+        electionToOwner[electionCount] = msg.sender;
+
+        emit ElectionAdded(electionCount,_electionName);
+        electionCount++;
+
     }
 
     //TODO test
-    function nextStep(uint _idElection) public electionOwner(_idElection) {
-        for(uint i = 0; i < elections.length; i++) {
-            if(elections[i].id == _idElection) {
-                if(elections[i].state == ElectionState.APPLICATION) {
-                    elections[i].state = ElectionState.VOTE;
-                    emit ChangeElectionState(elections[i].state);
-                } else if(elections[i].state == ElectionState.VOTE){
-                    elections[i].state = ElectionState.RESULTS;
-                    emit ChangeElectionState(elections[i].state);
-                }
-            }
-        }
+//    function nextStep(uint _idElection) public electionOwner(_idElection) {
+//        for(uint i = 0; i < elections.length; i++) {
+//            if(elections[i].id == _idElection) {
+//                if(elections[i].state == ElectionState.APPLICATION) {
+//                    elections[i].state = ElectionState.VOTE;
+//                    emit ChangeElectionState(elections[i].state);
+//                } else if(elections[i].state == ElectionState.VOTE){
+//                    elections[i].state = ElectionState.RESULTS;
+//                    emit ChangeElectionState(elections[i].state);
+//                }
+//            }
+//        }
+//    }
+
+    //TODO implement the test
+    function addCandidate(uint256 electionID, string memory _name, string memory _firstName) public {
+        Election storage election = elections[electionID];
+
+        election.candidates[election.candidateCount] = Candidate(_name, _firstName, msg.sender);
+        election.candidateCount++;
+        emit CandidateAdded(_name, _firstName);
     }
 
 }
