@@ -2,11 +2,11 @@
 pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "./CandidateHelper.sol";
 import "./Ping.sol";
+import "./VoteHelper.sol";
 
 
-contract Poll is CandidateHelper, Ping {
+contract Poll is VoteHelper, Ping {
 
   address public owner = msg.sender;
 

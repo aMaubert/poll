@@ -1,16 +1,14 @@
 pragma solidity >=0.4.22 <0.8.0;
 pragma experimental ABIEncoderV2;
 
-
-import "./CalculUtils.sol";
-import "./VoteFactory.sol";
-import "./CandidateFactory.sol";
+import "./Definitions.sol";
 import "./UniqueID.sol";
+
 
 /*
 This file is responsible to create and modify polls
 */
-contract PollFactory is VoteFactory, UniqueID  {
+contract PollFactory is Definitions, UniqueID  {
 
     /*
         Pour le front : - Une méthode qui retourne toutes les élections pour laquelle un utilisateur a voté
@@ -24,10 +22,16 @@ contract PollFactory is VoteFactory, UniqueID  {
                        - event au front à l'ajout d'un candidat
     */
 
+
+    mapping(uint => Election) public elections;
+
+    uint256 public electionCount;
+    mapping(uint256 => address) public electionToOwner;
+
     /**
      * @dev Throws if called by any account other than the owner.
      */
-    modifier electionOwner(uint electionID) {
+    modifier isElectionOwner(uint electionID) {
         require(
             msg.sender == electionToOwner[electionID],
             "only election's owner"
@@ -35,26 +39,13 @@ contract PollFactory is VoteFactory, UniqueID  {
         _;
     }
 
-    mapping(uint => Election) public elections;
-
-    uint256 public electionCount;
-
     event ElectionAdded(uint id, string name);
 
     event ChangeElectionState(ElectionState state);
 
-    mapping(address => Election) public participated;
-
-    mapping(uint256 => address) public electionToOwner;
-
     constructor() public {
         electionCount = 0;
     }
-
-    event printNumber(uint);
-    event printElection(uint256, string, ElectionState);
-    event candidateAdded(string, string, address);
-
 
     function createElection(string memory _electionName) public {
         elections[electionCount] = Election(electionCount, _electionName, ElectionState.APPLICATION, 0, 0);
@@ -65,7 +56,7 @@ contract PollFactory is VoteFactory, UniqueID  {
     }
 
     //TODO test
-    function nextStep(uint _idElection) public electionOwner(_idElection) {
+    function nextStep(uint _idElection) public isElectionOwner(_idElection) {
         for(uint i = 0; i < electionCount; i++) {
             if(elections[i].id == _idElection) {
                 if(elections[i].state == ElectionState.APPLICATION) {
@@ -78,26 +69,4 @@ contract PollFactory is VoteFactory, UniqueID  {
             }
         }
     }
-
-    //TODO implement the test
-    function addCandidate(uint256 electionID, string memory _name, string memory _firstName) public {
-        Election storage election = elections[electionID];
-
-        election.candidates[election.candidateCount] = Candidate(_name, _firstName, msg.sender);
-        election.candidateCount++;
-        emit CandidateAdded(_name, _firstName);
-    }
-
-    function addVote(uint256 electionID, address[] memory candidateAddresses, uint8[] memory notes) public {
-        Election storage election = elections[electionID];
-        election.votes[election.voteCount] = Vote(msg.sender, candidateAddresses.length);
-
-        for(uint i = 0; i < candidateAddresses.length; i++) {
-            election.votes[election.voteCount].ballot[candidateAddresses[i]] = notes[i];
-        }
-        election.voteCount++ ;
-        emit VoteAdded(msg.sender, candidateAddresses, notes);
-
-    }
-
 }

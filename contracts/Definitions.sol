@@ -1,4 +1,5 @@
 pragma solidity >=0.4.22 <0.8.0;
+pragma experimental ABIEncoderV2;
 
 contract Definitions {
 
@@ -13,7 +14,7 @@ contract Definitions {
         uint ballotCount;
         mapping (address => uint8) ballot;      // Un vote correspond à l'adresse du Candidate et des notes.
     }
-    
+
     enum ElectionState { APPLICATION, VOTE, RESULTS}
 
     struct Election {
