@@ -14,7 +14,6 @@ contract PollHelper is PollFactory {
     }
 
 
-    // On récupère la liste des candidats d'une élection
     function allCandidatesByElectionID(uint256 electionID) public view returns( address[] memory, string[] memory, string[] memory) {
         Election storage election = elections[electionID];
 
@@ -32,11 +31,7 @@ contract PollHelper is PollFactory {
         return (candidateAddressArray, nameArray, firstNameArray);
     }
 
-
-    event printNumbers(uint[]);
-    event printAddress(address);
-
-    function allVotesByElectionID(uint256 electionID) public returns(address[] memory, address[] memory, uint[] memory) {
+    function allVotesByElectionID(uint256 electionID) public view returns(address[] memory, address[] memory, uint[] memory) {
         Election storage election = elections[electionID];
         address[] memory addresses;
         (addresses,,) = allCandidatesByElectionID(electionID);
@@ -45,18 +40,14 @@ contract PollHelper is PollFactory {
         address[] memory candidatesAddress = new address[](election.candidateCount * election.voteCount);
         uint[] memory notes = new uint[](election.candidateCount * election.voteCount);
 
-        uint index = 0;
         for(uint i = 0; i < election.voteCount; i++) {
             Vote storage vote = election.votes[i];
             votersAddress[i] = vote.voter_address;
             for(uint j = 0; j < election.candidateCount; j++) {
-                candidatesAddress[index] = addresses[j];
-                notes[index] = vote.ballot[addresses[j]];
-                index++;
-                emit printNumbers(notes);
+                candidatesAddress[(i * election.candidateCount) + j ] = addresses[j];
+                notes[(i * election.candidateCount) + j] = vote.ballot[addresses[j]];
             }
         }
-
         return (votersAddress, candidatesAddress, notes);
     }
 
@@ -93,33 +84,3 @@ contract PollHelper is PollFactory {
 
 
 }
-
-//
-//contract BidHistory {
-//    struct Bid {
-//        address bidOwner;
-//        uint bidAmount;
-//        bytes32 nameEntity;
-//    }
-//    mapping (uint => Bid) public bids;
-//    uint public bidCount;
-//
-//    constructor() public {
-//        bidCount = 0;
-//        storeBid("address0",0,0);
-//        storeBid("address1",1,1);
-//    }
-//    function storeBid(address memory _bidOwner, uint memory _bidAmount, bytes32 memory _nameEntity) public  {
-//        bids[tripcount] = Bid(_bidOwner, _bidAmount,_nameEntity);
-//        bidCount++;
-//    }
-//    //return Array of structure
-//    function getBid() public view returns (Bid[] memory){
-//        Bid[] memory lBids = new Bid[](tripcount);
-//        for (uint i = 0; i < bidCount; i++) {
-//            Bid storage lBid = bids[i];
-//            lBids[i] = lBid;
-//        }
-//        return lBids;
-//    }
-//}

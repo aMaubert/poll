@@ -2,7 +2,7 @@ class VoteCoder {
     decodeVoteList(input, candidatesCount) {
         const voters = input[0];
         const candidatesAddress = input[1];
-        const notes = input[1];
+        const notes = input[2];
 
 
         if (!Array.isArray(voters) || !Array.isArray(candidatesAddress) || !Array.isArray(notes) ||
@@ -11,17 +11,14 @@ class VoteCoder {
         }
 
         const votes = [];
-        console.log({notes, candidatesAddress});
 
         for(let i = 0; i < voters.length; i++) {
             const tmpNotes = [];
             const tmpCandidatesAddress = [];
 
-
-
-            for(let j = i; j < i + candidatesCount; j++) {
-                tmpNotes.push(notes[j].toNumber());
-                tmpCandidatesAddress.push(candidatesAddress[j]);
+            for(let j = 0; j < candidatesCount; j++) {
+                tmpNotes.push(notes[(i * candidatesCount) + j].toNumber());
+                tmpCandidatesAddress.push(candidatesAddress[(i * candidatesCount) + j]);
             }
             let ballot = {};
             for(let j = 0; j < candidatesCount; j++) {

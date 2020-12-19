@@ -1,6 +1,5 @@
 const Poll = artifacts.require('Poll');
 const truffleAssert = require('truffle-assertions');
-const fromWei = require('web3').utils.fromWei;
 const GeneratorService = require('./utils').GeneratorService;
 const candidateCoder = require('./utils').candidateCoder;
 const electionCoder = require('./utils').electionCoder;
@@ -145,17 +144,40 @@ contract('Poll contract', (accounts) => {
         const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
         const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
 
-        await generatorService.addVotes(electionId, candidates, alice);
-        await generatorService.addVotes(electionId, candidates, bob);
-        await generatorService.addVotes(electionId, candidates, virginie);
+        const aliceVote = await generatorService.addVotes(electionId, candidates, alice);
+        const bobVote = await generatorService.addVotes(electionId, candidates, bob);
+        const virginieVote = await generatorService.addVotes(electionId, candidates, virginie);
 
         //When
         const voteToEncode = await contractInstance.allVotesByElectionID(electionId);
 
-        voteToEncode.logs[0].args[0].forEach(bn => console.log({bn}));
-        const votes = voteCoder.decodeVoteList(voteToEncode);
+        //Then
+        const votes = voteCoder.decodeVoteList(voteToEncode, candidates.length);
 
-        console.log({votes});
+
+        const aliceVoteRes = votes.find(vote => vote.voter === alice);
+        const bobVoteRes = votes.find(vote => vote.voter === bob);
+        const virginieVoteRes = votes.find(vote => vote.voter === virginie);
+
+        assert.notEqual(aliceVote, undefined);
+        assert.notEqual(bobVote, undefined);
+        assert.notEqual(virginieVote, undefined);
+
+        for( const candidate of Object.keys(aliceVote) ) {
+            assert.equal(aliceVote[candidate], aliceVoteRes.ballot[candidate]);
+        }
+
+        for( const candidate of Object.keys(bobVote) ) {
+            assert.equal(bobVote[candidate], bobVoteRes.ballot[candidate]);
+        }
+
+        for( const candidate of Object.keys(virginieVote) ) {
+            assert.equal(virginieVote[candidate], virginieVoteRes.ballot[candidate]);
+        }
+
+
+
+
 
     })
 
