@@ -72,21 +72,6 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
     //TODO implement this
     function createElection(string memory _electionName) public {
         elections[electionCount] = Election(electionCount, _electionName, ElectionState.APPLICATION, 0, 0);
-
-        addCandidate(electionCount, "Allan", "Maubert");
-//        elections[electionCount].candidates[elections[electionCount].candidateCount] =  Candidate("Allan", "Maubert",msg.sender);
-//        elections[electionCount].candidateCount++;
-//        Election storage election = elections[0];
-//        emit printNumber(election.candidateCount);
-//        for(uint i = 0; i < election.candidateCount; i++) {
-//            Candidate storage candidate = election.candidates[i];
-//            emit candidateAdded(
-//                candidate.name,
-//                candidate.firstName,
-//                candidate.candidateAddress
-//            );
-//        }
-
         electionToOwner[electionCount] = msg.sender;
 
         emit ElectionAdded(electionCount,_electionName);
@@ -116,6 +101,18 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
         election.candidates[election.candidateCount] = Candidate(_name, _firstName, msg.sender);
         election.candidateCount++;
         emit CandidateAdded(_name, _firstName);
+    }
+
+    function addVote(uint256 electionID, address[] memory candidateAddresses, uint8[] memory notes) public {
+        Election storage election = elections[electionID];
+        election.votes[election.voteCount] = Vote(msg.sender, candidateAddresses.length);
+
+        for(uint i = 0; i < candidateAddresses.length; i++) {
+            election.votes[election.voteCount].ballot[candidateAddresses[i]] = notes[i];
+        }
+        election.voteCount++ ;
+        emit VoteAdded(msg.sender, candidateAddresses, notes);
+
     }
 
 }

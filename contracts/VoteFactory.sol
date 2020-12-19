@@ -11,6 +11,8 @@ contract VoteFactory {
         mapping (address => uint8) ballot;      // Un vote correspond à l'adresse du Candidate et des notes.
     }
 
+    event VoteAdded(address voter_address, address[] candidates, uint8[] notes);
+
 
     modifier hasVoted(){
         require(hasOwnerVoted[msg.sender] == false, "You have already voted");

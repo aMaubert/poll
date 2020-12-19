@@ -15,7 +15,7 @@ contract PollHelper is PollFactory {
 
 
     // On récupère la liste des candidats d'une élection
-    function allCandidatesByElectionID(uint256 electionID) public view returns(string[] memory, string[] memory, address[] memory) {
+    function allCandidatesByElectionID(uint256 electionID) public view returns( address[] memory, string[] memory, string[] memory) {
         Election storage election = elections[electionID];
 
         string[] memory nameArray = new string[](election.candidateCount);
@@ -29,79 +29,57 @@ contract PollHelper is PollFactory {
             candidateAddressArray[i] = candidate.candidateAddress;
         }
 
-        return (nameArray, firstNameArray, candidateAddressArray);
+        return (candidateAddressArray, nameArray, firstNameArray);
     }
 
-    function uintToBytes(uint v) pure private returns (bytes32) {
-        bytes32 ret;
-        if (v == 0) {
-            ret = bytes32(0);
-        }
-        else {
-            while (v > 0) {
-                ret = bytes32(uint(ret) / (2 ** 8));
-                ret |= bytes32(((v % 10) + 48) * 2 ** (8 * 31));
-                v /= 10;
-            }
-        }
-        return ret;
-    }
 
-    function bytes32ToString (bytes32 x) pure private returns (string memory) {
-        bytes memory bytesString = new bytes(32);
-        uint charCount = 0;
-        for (uint j = 0; j < 32; j++) {
-            byte char = byte(bytes32(uint(x) * 2 ** (8 * j)));
-            if (char != 0) {
-                bytesString[charCount] = char;
-                charCount++;
-            }
-        }
-        bytes memory resultBytes = new bytes(charCount);
-        for (uint j = 0; j < charCount; j++) {
-            resultBytes[j] = bytesString[j];
-        }
+    event printNumbers(uint[]);
+    event printAddress(address);
 
-        return string(resultBytes);
-    }
-
-    function uintToString(uint v) pure private returns (string memory) {
-        return bytes32ToString(uintToBytes(v));
-    }
-
-    function allVotesByElectionID(uint256 electionID) public view returns(address[] memory, string[] memory) {
+    function allVotesByElectionID(uint256 electionID) public returns(address[] memory, address[] memory, uint[] memory) {
         Election storage election = elections[electionID];
-        address[] memory voterAdresses = new address[](election.voteCount);
-        string[] memory ballot = new string[](election.voteCount);
+        address[] memory addresses;
+        (addresses,,) = allCandidatesByElectionID(electionID);
 
-//        for(uint i = 0; i < election.voteCount; i++) {
-//            Vote storage vote = election.votes[i];
-//            voterAdresses[i] = vote.voter_address;
-//            address[] memory addresses;
-//            (,,addresses) = allCandidatesByElectionID(electionID);
-//            for(uint j = 0 ; j < addresses.length; j++) {
-//                address candidateAddress = addresses[j];
-//                uint8 note = vote.ballot[candidateAddress];
-//                ballot[i] = uintToString(note);
-//            }
-//        }
+        address[] memory votersAddress = new address[](election.voteCount);
+        address[] memory candidatesAddress = new address[](election.candidateCount * election.voteCount);
+        uint[] memory notes = new uint[](election.candidateCount * election.voteCount);
 
-        return (voterAdresses, ballot);
+        uint index = 0;
+        for(uint i = 0; i < election.voteCount; i++) {
+            Vote storage vote = election.votes[i];
+            votersAddress[i] = vote.voter_address;
+            for(uint j = 0; j < election.candidateCount; j++) {
+                candidatesAddress[index] = addresses[j];
+                notes[index] = vote.ballot[addresses[j]];
+                index++;
+                emit printNumbers(notes);
+            }
+        }
+
+        return (votersAddress, candidatesAddress, notes);
     }
 
 
     function allElections() public view returns(uint256[] memory, string[] memory, ElectionState[] memory) {
         uint256[] memory idArray = new uint256[](electionCount);
         string[] memory nameArray = new string[](electionCount);
+
         ElectionState[] memory stateArray = new ElectionState[](electionCount);
+
         for (uint i = 0; i < electionCount; i++) {
+
             Election storage election = elections[i];
             idArray[i] = election.id;
             nameArray[i] = election.name;
             stateArray[i] = election.state;
+
         }
+
         return (idArray, nameArray, stateArray);
     }
+
+
     //TODO implement
 //    function fetchElectionByID(uint id) public view returns(Election[] memory ) {
 //        return (elections[electionCount - 1].id, elections[electionCount - 1].name, elections[electionCount - 1].state);
