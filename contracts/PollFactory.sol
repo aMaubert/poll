@@ -30,7 +30,7 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
     modifier electionOwner(uint electionID) {
         require(
             msg.sender == electionToOwner[electionID],
-            "This function is restricted to the election's owner"
+            "only election's owner"
         );
         _;
     }
@@ -68,31 +68,28 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
     event candidateAdded(string, string, address);
 
 
-
-    //TODO implement this
     function createElection(string memory _electionName) public {
         elections[electionCount] = Election(electionCount, _electionName, ElectionState.APPLICATION, 0, 0);
         electionToOwner[electionCount] = msg.sender;
 
         emit ElectionAdded(electionCount,_electionName);
         electionCount++;
-
     }
 
     //TODO test
-//    function nextStep(uint _idElection) public electionOwner(_idElection) {
-//        for(uint i = 0; i < elections.length; i++) {
-//            if(elections[i].id == _idElection) {
-//                if(elections[i].state == ElectionState.APPLICATION) {
-//                    elections[i].state = ElectionState.VOTE;
-//                    emit ChangeElectionState(elections[i].state);
-//                } else if(elections[i].state == ElectionState.VOTE){
-//                    elections[i].state = ElectionState.RESULTS;
-//                    emit ChangeElectionState(elections[i].state);
-//                }
-//            }
-//        }
-//    }
+    function nextStep(uint _idElection) public electionOwner(_idElection) {
+        for(uint i = 0; i < electionCount; i++) {
+            if(elections[i].id == _idElection) {
+                if(elections[i].state == ElectionState.APPLICATION) {
+                    elections[i].state = ElectionState.VOTE;
+                    emit ChangeElectionState(elections[i].state);
+                } else if(elections[i].state == ElectionState.VOTE){
+                    elections[i].state = ElectionState.RESULTS;
+                    emit ChangeElectionState(elections[i].state);
+                }
+            }
+        }
+    }
 
     //TODO implement the test
     function addCandidate(uint256 electionID, string memory _name, string memory _firstName) public {

@@ -6,9 +6,13 @@ const ElectionStateDecode = Object.freeze({
     2: 'RESULTS'
 });
 
-const decodeElectionState = (state) => ElectionState[ElectionStateDecode[state.toString()]] ;
 
 class ElectionCoder {
+
+    decodeElectionState(state){
+        return ElectionState[ElectionStateDecode[state.toString()]] ;
+    }
+
 
     decodeCandidateList(input) {
         const ids = input['0'];
@@ -23,7 +27,7 @@ class ElectionCoder {
         const elections = [];
 
         for(let i = 0; i < ids.length; i++) {
-            const election = {id: ids[i].toNumber(), name: names[i], state: decodeElectionState(states[i]) };
+            const election = {id: ids[i].toNumber(), name: names[i], state: this.decodeElectionState(states[i]) };
             elections.push(election);
         }
 

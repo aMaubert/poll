@@ -1,14 +1,11 @@
 const Poll = artifacts.require('Poll');
 const truffleAssert = require('truffle-assertions');
 const GeneratorService = require('./utils').GeneratorService;
-const candidateCoder = require('./utils').candidateCoder;
 const electionCoder = require('./utils').electionCoder;
 const ElectionState = require('./utils').ElectionState;
-const randomNumber = require('./utils').randomNumber;
-const voteCoder = require('./utils').voteCoder;
 
-contract('Poll contract', (accounts) => {
-    let [alice, bob, virginie] = accounts;
+contract('Election Factory And Election Helper', (accounts) => {
+    let [alice, bob] = accounts;
     let contractInstance ;
     let generatorService ;
 
@@ -46,138 +43,48 @@ contract('Poll contract', (accounts) => {
 
     })
 
-    it('Should Add a candidates', async () => {
-        const electionName = 'Election 1';
-        const electionId = await generatorService.addElection(electionName, alice);
-
-        const candidate = {name: 'Maubert', firstName: 'Allan'};
-        const addCandidateTransaction = await contractInstance.addCandidate(electionId, candidate.name, candidate.firstName, {from: alice});
-        truffleAssert.eventEmitted(addCandidateTransaction, 'CandidateAdded', (event) => event.name === candidate.name && event.firstName === candidate.firstName );
-    })
-
-    it('Should Fetch all candidates of a given election ', async () => {
-
+    it('Should change election state from Application to VOTE', async () => {
         //Given
-        const electionName = 'Election 1';
-        const electionId = await generatorService.addElection(electionName, alice);
-
-        const firstCandidate = {name: 'AZERTY', firstName: 'bob'};
-        await generatorService.addCandidate(electionId, firstCandidate.name, firstCandidate.firstName, bob);
-
-        const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
-        await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
+        const election = { name: 'Election 1' };
+        const electionId = await generatorService.addElection(election.name, alice);
 
         //When
-        const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
-
-        const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
-
-        //Then
-        const candidateBob = candidates.find(candidate => candidate.address === bob);
-
-        assert.equal(candidateBob.name, firstCandidate.name);
-        assert.equal(candidateBob.firstName, firstCandidate.firstName);
-
-        const candidateVirginie = candidates.find(candidate => candidate.address === virginie);
-
-        assert.equal(candidateVirginie.name, secondCandidate.name);
-        assert.equal(candidateVirginie.firstName, secondCandidate.firstName);
-    })
-
-
-    it('Should add a Vote ', async () => {
-
-        //Given
-        const electionName = 'Election 1';
-        const electionId = await generatorService.addElection(electionName, alice);
-
-        const firstCandidate = {name: 'AZERTY', firstName: 'bob'};
-        await generatorService.addCandidate(electionId, firstCandidate.name, firstCandidate.firstName, bob);
-
-        const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
-        await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
-
-
-        const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
-        const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
-
-        let candidatesAddress = [];
-        let candidatesNote = [];
-        candidates.forEach(candidate => {
-            candidatesAddress.push(candidate.address);
-            //Get a random number between 0 and 20
-            candidatesNote.push(randomNumber(20));
+        const transaction = await contractInstance.nextStep(electionId, {from : alice});
+        truffleAssert.eventEmitted(transaction, 'ChangeElectionState', (event) => {
+            const currentState = electionCoder.decodeElectionState(event.state.toNumber());
+            assert.notEqual(currentState, ElectionState.APPLICATION);
+            return currentState  === ElectionState.VOTE ;
         });
-
-
-        //When
-        const addVoteTransaction = await contractInstance.addVote(electionId, candidatesAddress, candidatesNote, {from : alice});
-
-        //Then
-        const result = addVoteTransaction.logs[0].args;
-        const vote = {voter: result.voter_address, candidates: result.candidates, notes: result.notes.map(note => note.toNumber()) };
-
-        assert.equal(vote.voter, alice);
-        assert.equal(candidatesAddress.length, vote.candidates.length);
-        assert.equal(candidatesAddress.length, vote.notes.length);
-
-        for(let i = 0; i < candidatesAddress.length; i++ ) {
-            assert.equal(candidatesAddress[i], vote.candidates[i]);
-            assert.equal(candidatesNote[i], vote.notes[i]);
-        }
-
     })
 
-    it('Should Fetch all votes of a given election ', async () => {
-
+    it('Should change election state from VOTE to RESULTS', async () => {
         //Given
-        const electionName = 'Election 1';
-        const electionId = await generatorService.addElection(electionName, alice);
-
-        const firstCandidate = {name: 'AZERTY', firstName: 'bob'};
-        await generatorService.addCandidate(electionId, firstCandidate.name, firstCandidate.firstName, bob);
-
-        const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
-        await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
-
-
-        const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
-        const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
-
-        const aliceVote = await generatorService.addVotes(electionId, candidates, alice);
-        const bobVote = await generatorService.addVotes(electionId, candidates, bob);
-        const virginieVote = await generatorService.addVotes(electionId, candidates, virginie);
+        const election = { name: 'Election 1' };
+        const electionId = await generatorService.addElection(election.name, alice);
 
         //When
-        const voteToEncode = await contractInstance.allVotesByElectionID(electionId);
+        await contractInstance.nextStep(electionId, {from : alice}); //APPLICATION State
+        const transaction = await contractInstance.nextStep(electionId, {from : alice});//VOTE State
 
-        //Then
-        const votes = voteCoder.decodeVoteList(voteToEncode, candidates.length);
+        truffleAssert.eventEmitted(transaction, 'ChangeElectionState', (event) => {
+            const currentState = electionCoder.decodeElectionState(event.state.toNumber());
+            assert.notEqual(currentState, ElectionState.APPLICATION);
+            assert.notEqual(currentState, ElectionState.VOTE);
+            return currentState  === ElectionState.RESULTS ;
+        });
+    })
 
+    it('Should not change the elecction state if you cal nextStep and your are not the owner of the election', async () => {
+        const election = { name: 'Election 1' };
+        const electionId = await generatorService.addElection(election.name, alice);
 
-        const aliceVoteRes = votes.find(vote => vote.voter === alice);
-        const bobVoteRes = votes.find(vote => vote.voter === bob);
-        const virginieVoteRes = votes.find(vote => vote.voter === virginie);
-
-        assert.notEqual(aliceVote, undefined);
-        assert.notEqual(bobVote, undefined);
-        assert.notEqual(virginieVote, undefined);
-
-        for( const candidate of Object.keys(aliceVote) ) {
-            assert.equal(aliceVote[candidate], aliceVoteRes.ballot[candidate]);
-        }
-
-        for( const candidate of Object.keys(bobVote) ) {
-            assert.equal(bobVote[candidate], bobVoteRes.ballot[candidate]);
-        }
-
-        for( const candidate of Object.keys(virginieVote) ) {
-            assert.equal(virginieVote[candidate], virginieVoteRes.ballot[candidate]);
-        }
-
-
-
-
+        await truffleAssert.fails(
+            //When
+            contractInstance.nextStep(electionId, {from : bob}),  // bob is not the owner of the election, it's alice
+            //Then
+            truffleAssert.ErrorType.REVERT,
+            'only election\'s owner'
+        );
 
     })
 
