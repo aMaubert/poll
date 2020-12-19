@@ -10,7 +10,7 @@ import "./UniqueID.sol";
 /*
 This file is responsible to create and modify polls
 */
-contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
+contract PollFactory is VoteFactory, UniqueID  {
 
     /*
         Pour le front : - Une méthode qui retourne toutes les élections pour laquelle un utilisateur a voté
@@ -35,21 +35,9 @@ contract PollFactory is VoteFactory, CandidateFactory, UniqueID  {
         _;
     }
 
-    struct Election {
-        uint256 id;
-        string name;
-        ElectionState state;
-        uint candidateCount;
-        uint voteCount;
-        mapping(uint => Candidate) candidates;
-        mapping(uint => Vote) votes;
-    }
-
     mapping(uint => Election) public elections;
 
     uint256 public electionCount;
-
-    enum ElectionState { APPLICATION, VOTE, RESULTS}
 
     event ElectionAdded(uint id, string name);
 
