@@ -77,8 +77,6 @@ contract('Vote Factory And Vote Helper', (accounts) => {
         const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
         await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
 
-
-
         const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
         const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
 
@@ -97,6 +95,48 @@ contract('Vote Factory And Vote Helper', (accounts) => {
             //Then
             truffleAssert.ErrorType.REVERT,
             'Can\'t vote this election .'
+        );
+
+    })
+
+    it('Should have an error when you vote 2 times the same election', async () => {
+
+        //Given
+        const electionName = 'Election 1';
+        const electionId = await generatorService.addElection(electionName, alice);
+
+        const firstCandidate = {name: 'AZERTY', firstName: 'bob'};
+        await generatorService.addCandidate(electionId, firstCandidate.name, firstCandidate.firstName, bob);
+
+        const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
+        await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
+
+
+
+        const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
+        const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
+
+
+        let candidatesAddress = [];
+        let candidatesNote = [];
+        candidates.forEach(candidate => {
+            candidatesAddress.push(candidate.address);
+            //Get a random number between 0 and 20
+            candidatesNote.push(randomNumber(20));
+        });
+
+        await contractInstance.nextStep(electionId, {from : alice}); // Election should be in Vote state
+
+
+        //When
+        await contractInstance.addVote(electionId, candidatesAddress, candidatesNote, {from : alice});
+
+        await truffleAssert.fails(
+            //When
+            contractInstance.addVote(electionId, candidatesAddress, candidatesNote, {from : alice}),
+            //Then
+            truffleAssert.ErrorType.REVERT,
+            'You have already voted for this election .'
         );
 
     })

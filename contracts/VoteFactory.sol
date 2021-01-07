@@ -7,10 +7,18 @@ import "./CandidateHelper.sol";
 
 contract VoteFactory is CandidateHelper {
 
-    mapping(address => Election) public participated;
+    mapping(address => Election[]) public participated;
 
-    modifier hasVoted(uint256 electionId){
-        require(participated[msg.sender].id == electionId, "You have already voted");
+    modifier hasNotVoted(uint256 electionId){
+        bool hasParticipated = false;
+        if (participated[msg.sender].length > 0) {
+            for (uint i = 0; i < participated[msg.sender].length; i++) {
+                if(participated[msg.sender][i].id == electionId) {
+                    hasParticipated = true;
+                }
+            }
+        }
+        require(!hasParticipated, "You have already voted for this election .");
         _;
     }
 
@@ -22,7 +30,7 @@ contract VoteFactory is CandidateHelper {
 
     event VoteAdded(address voter_address, address[] candidates, uint8[] notes);
 
-    function addVote(uint256 electionID, address[] memory candidateAddresses, uint8[] memory notes) public isVoteState(electionID) {
+    function addVote(uint256 electionID, address[] memory candidateAddresses, uint8[] memory notes) public isVoteState(electionID) hasNotVoted(electionID) {
         Election storage election = elections[electionID];
         election.votes[election.voteCount] = Vote(msg.sender, candidateAddresses.length);
 
@@ -31,7 +39,7 @@ contract VoteFactory is CandidateHelper {
         }
         election.voteCount++ ;
 
-        participated[msg.sender] = election;
+        participated[msg.sender].push(election);
         emit VoteAdded(msg.sender, candidateAddresses, notes);
 
     }

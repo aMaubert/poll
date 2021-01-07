@@ -26,6 +26,7 @@ contract PollFactory is Definitions, UniqueID  {
     mapping(uint => Election) public elections;
 
     uint256 public electionCount;
+
     mapping(uint256 => address) public electionToOwner;
 
     /**
@@ -38,6 +39,8 @@ contract PollFactory is Definitions, UniqueID  {
         );
         _;
     }
+
+
 
     event ElectionAdded(uint id, string name);
 
