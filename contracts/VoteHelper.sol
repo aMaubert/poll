@@ -25,6 +25,7 @@ contract VoteHelper is VoteFactory {
                 notes[(i * election.candidateCount) + j] = vote.ballot[addresses[j]];
             }
         }
+
         return (votersAddress, candidatesAddress, notes);
     }
 

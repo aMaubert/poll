@@ -16,6 +16,10 @@ class GeneratorService {
         this.contractInstance.addCandidate(electionId,name, firstName, {from: sender});
     }
 
+    async electionNextStep(electionId, electionOwner) {
+        this.contractInstance.nextStep(electionId, {from : electionOwner}); // Election should be in Vote state
+    }
+
     async addVotes(electionId, candidates, sender) {
         let candidatesAddress = [];
         let candidatesNote = [];

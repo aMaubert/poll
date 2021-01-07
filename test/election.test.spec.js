@@ -74,7 +74,7 @@ contract('Election Factory And Election Helper', (accounts) => {
         });
     })
 
-    it('Should not change the elecction state if you cal nextStep and your are not the owner of the election', async () => {
+    it('Should not change the election state if you call nextStep and your are not the owner of the election', async () => {
         const election = { name: 'Election 1' };
         const electionId = await generatorService.addElection(election.name, alice);
 

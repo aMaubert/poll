@@ -3,6 +3,7 @@ const GeneratorService = require('./utils').GeneratorService;
 const randomNumber = require('./utils').randomNumber;
 const voteCoder = require('./utils').voteCoder;
 const candidateCoder = require('./utils').candidateCoder;
+const truffleAssert = require('truffle-assertions');
 
 
 contract('Vote Factory And Vote Helper', (accounts) => {
@@ -14,6 +15,7 @@ contract('Vote Factory And Vote Helper', (accounts) => {
         contractInstance = await Poll.new();
         generatorService = new GeneratorService(contractInstance);
     })
+
 
 
     it('Should add a Vote ', async () => {
@@ -29,8 +31,10 @@ contract('Vote Factory And Vote Helper', (accounts) => {
         await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
 
 
+
         const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
         const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
+
 
         let candidatesAddress = [];
         let candidatesNote = [];
@@ -39,6 +43,8 @@ contract('Vote Factory And Vote Helper', (accounts) => {
             //Get a random number between 0 and 20
             candidatesNote.push(randomNumber(20));
         });
+
+        await contractInstance.nextStep(electionId, {from : alice}); // Election should be in Vote state
 
 
         //When
@@ -59,6 +65,42 @@ contract('Vote Factory And Vote Helper', (accounts) => {
 
     })
 
+    it('Should have an error when yout vote an election with a state other that Vote', async () => {
+
+        //Given
+        const electionName = 'Election 1';
+        const electionId = await generatorService.addElection(electionName, alice);
+
+        const firstCandidate = {name: 'AZERTY', firstName: 'bob'};
+        await generatorService.addCandidate(electionId, firstCandidate.name, firstCandidate.firstName, bob);
+
+        const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
+        await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
+
+
+
+        const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
+        const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
+
+
+        let candidatesAddress = [];
+        let candidatesNote = [];
+        candidates.forEach(candidate => {
+            candidatesAddress.push(candidate.address);
+            //Get a random number between 0 and 20
+            candidatesNote.push(randomNumber(20));
+        });
+
+        await truffleAssert.fails(
+            //When
+            contractInstance.addVote(electionId, candidatesAddress, candidatesNote, {from : alice}),
+            //Then
+            truffleAssert.ErrorType.REVERT,
+            'Can\'t vote this election .'
+        );
+
+    })
+
     it('Should Fetch all votes of a given election ', async () => {
 
         //Given
@@ -74,6 +116,8 @@ contract('Vote Factory And Vote Helper', (accounts) => {
 
         const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
         const candidates = candidateCoder.decodeCandidateList(candidatesToDecode);
+
+        await generatorService.electionNextStep(electionId, alice);
 
         const aliceVote = await generatorService.addVotes(electionId, candidates, alice);
         const bobVote = await generatorService.addVotes(electionId, candidates, bob);
@@ -105,10 +149,6 @@ contract('Vote Factory And Vote Helper', (accounts) => {
         for( const candidate of Object.keys(virginieVote) ) {
             assert.equal(virginieVote[candidate], virginieVoteRes.ballot[candidate]);
         }
-
-
-
-
 
     })
 
