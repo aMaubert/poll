@@ -3,6 +3,7 @@ const GeneratorService = require('./utils').GeneratorService;
 const randomNumber = require('./utils').randomNumber;
 const voteCoder = require('./utils').voteCoder;
 const candidateCoder = require('./utils').candidateCoder;
+const electionCoder = require('./utils').electionCoder;
 const truffleAssert = require('truffle-assertions');
 
 
@@ -190,6 +191,45 @@ contract('Vote Factory And Vote Helper', (accounts) => {
             assert.equal(virginieVote[candidate], virginieVoteRes.ballot[candidate]);
         }
 
+    })
+
+    it('Should fetch all elections msg sender has voted', async () => {
+        //Given
+        const electionName = 'Election 1';
+        const electionId = await generatorService.addElection(electionName, alice);
+
+        const secondElectionName = 'Election 2';
+        const secondElectionId = await generatorService.addElection(secondElectionName, alice);
+
+        const firstCandidate = {name: 'AZERTY', firstName: 'bob'};
+        const secondCandidate = {name: 'MON-NOM-EST-TROP-LONG-ET-GRAS', firstName: 'virginie'};
+
+        //On ajoute les 2 candidats dans la premières election
+        await generatorService.addCandidate(electionId, firstCandidate.name, firstCandidate.firstName, bob);
+        await generatorService.addCandidate(electionId, secondCandidate.name, secondCandidate.firstName, virginie);
+
+        //On ajoute les 2 candidats dans la 2ème élection
+        await generatorService.addCandidate(secondElectionId, firstCandidate.name, firstCandidate.firstName, bob);
+        await generatorService.addCandidate(secondElectionId, secondCandidate.name, secondCandidate.firstName, virginie);
+
+        //On passe les 2 election en phase de Vote
+        await generatorService.electionNextStep(electionId, alice);
+        await generatorService.electionNextStep(secondElectionId, alice);
+
+        //Fetch candidats of  election 1
+        const candidatesToDecode = await contractInstance.allCandidatesByElectionID(electionId);
+        const candidatesFirstElections = candidateCoder.decodeCandidateList(candidatesToDecode);
+
+        //Bob vote for the first electiion
+        const bobVote = await generatorService.addVotes(electionId, candidatesFirstElections, bob);
+
+        const electionListToDecode = await contractInstance.fetchElectionMsgSenderHasVoted({from: bob});
+        const electionsBobHasVoted = electionCoder.decodeElectionList(electionListToDecode);
+        console.log({electionsBobHasVoted});
+
+
+        assert.equal(electionsBobHasVoted.length, 1);//bob has voted one time
+        assert.equal(electionsBobHasVoted[0].id, electionId); //The electionID bob has voted
     })
 
 

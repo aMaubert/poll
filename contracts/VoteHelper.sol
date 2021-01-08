@@ -63,4 +63,21 @@ contract VoteHelper is VoteFactory {
         //
     }
 
+    function fetchElectionMsgSenderHasVoted() public view returns(uint256[] memory, string[] memory, ElectionState[] memory) {
+
+        uint countVotedElections = participated[msg.sender].length;
+
+        uint256[] memory idArray = new uint256[](countVotedElections);
+        string[] memory nameArray = new string[](countVotedElections);
+        ElectionState[] memory stateArray = new ElectionState[](countVotedElections);
+
+        for(uint i = 0; i < countVotedElections; i++)  {
+            idArray[i] = participated[msg.sender][i].id;
+            nameArray[i] = participated[msg.sender][i].name;
+            stateArray[i] = participated[msg.sender][i].state;
+        }
+
+        return (idArray, nameArray, stateArray);
+    }
+
 }
