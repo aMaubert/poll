@@ -6,6 +6,7 @@ import "./PollFactory.sol";
 
 contract PollHelper is PollFactory {
 
+
     function allElections() public view returns(uint256[] memory, string[] memory, ElectionState[] memory) {
         uint256[] memory idArray = new uint256[](electionCount);
         string[] memory nameArray = new string[](electionCount);
@@ -26,14 +27,11 @@ contract PollHelper is PollFactory {
 
 
     //TODO implement
-    function fetchElectionByID(uint256 id) public view returns(uint256,string memory, ElectionState ) {
-//        return (elections[electionCount - 1].id, elections[electionCount - 1].name, elections[electionCount - 1].state);
-//        Election[] memory arrayElections = new Election[](electionCount);
-//        for (uint i = 0; i < electionCount; i++) {
-//            Election storage election = elections[i];
-//            arrayElections[i] = election;
-//        }
-        return (id, "NOT IMPLEMENTED YET", ElectionState.APPLICATION);
+    function fetchElectionByID(uint256 electionID) public view returns(uint256 ,string memory, ElectionState ) {
+        require(electionCount != 0, "We have 0 elections .");
+        Election storage election = elections[electionID];
+        require(election.id ==  electionID, "Election doesn't exists .");
+        return (election.id, election.name, election.state);
     }
 
 

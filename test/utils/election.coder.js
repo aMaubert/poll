@@ -14,7 +14,7 @@ class ElectionCoder {
     }
 
 
-    decodeCandidateList(input) {
+    decodeElectionList(input) {
         const ids = input['0'];
         const names = input['1'];
         const states = input['2'];
@@ -32,6 +32,13 @@ class ElectionCoder {
         }
 
         return elections;
+    }
+
+    decodeElection(input) {
+        const id = input['0'];
+        const name = input['1'];
+        const state = input['2'];
+        return {id: id.toNumber(), name: name, state: this.decodeElectionState(state)};
     }
 }
 

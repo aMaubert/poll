@@ -30,7 +30,7 @@ contract('Election Factory And Election Helper', (accounts) => {
         //When
         const electionsToDecode = await contractInstance.allElections();
 
-        const elections = electionCoder.decodeCandidateList(electionsToDecode);
+        const elections = electionCoder.decodeElectionList(electionsToDecode);
 
         //Then
         const firstElection = elections.find(election => election.id === election1Id);
@@ -88,5 +88,35 @@ contract('Election Factory And Election Helper', (accounts) => {
 
     })
 
+    it('Should fetch election by ID', async () => {
+        const electionToCreate = { name: 'Election 1' };
+        const electionId = await generatorService.addElection(electionToCreate.name, alice);
+        const electionToDecode = await contractInstance.fetchElectionByID(electionId,  {from: alice});
+        const election = electionCoder.decodeElection(electionToDecode);
+        assert.equal(election.name, electionToCreate.name);
+
+    })
+
+    it('Should fail when fetch an election by ID when we have 0 elections', async () => {
+        await truffleAssert.fails(
+            //When
+            contractInstance.fetchElectionByID(0,  {from: alice}),
+            //Then
+            truffleAssert.ErrorType.REVERT,
+            'We have 0 elections .'
+        );
+    })
+
+    it('Should fail when fetch an election by  wrong ID', async () => {
+        const electionToCreate = { name: 'Election 1' };
+        await generatorService.addElection(electionToCreate.name, alice);
+        await truffleAssert.fails(
+            //When
+            contractInstance.fetchElectionByID(2,  {from: alice}),
+            //Then
+            truffleAssert.ErrorType.REVERT,
+            'Election doesn\'t exists .'
+        );
+    })
 })
 
