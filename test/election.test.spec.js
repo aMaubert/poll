@@ -12,13 +12,13 @@ contract('Election Factory And Election Helper', (accounts) => {
     beforeEach( async () => {
         contractInstance = await Poll.new();
         generatorService = new GeneratorService(contractInstance);
-    })
+    });
 
     it('Should create Election', async () => {
         const electionName = "Election 1";
         const result = await contractInstance.createElection(electionName);
         truffleAssert.eventEmitted(result, 'ElectionAdded', (event) => event.id && event.name === electionName );
-    })
+    });
 
     it('Should Fetch All elections', async () => {
         //Given
@@ -41,7 +41,7 @@ contract('Election Factory And Election Helper', (accounts) => {
         assert.equal(secondElection.name, election2.name);
         assert.equal(secondElection.state, ElectionState.APPLICATION);
 
-    })
+    });
 
     it('Should change election state from Application to VOTE', async () => {
         //Given
@@ -55,7 +55,7 @@ contract('Election Factory And Election Helper', (accounts) => {
             assert.notEqual(currentState, ElectionState.APPLICATION);
             return currentState  === ElectionState.VOTE ;
         });
-    })
+    });
 
     it('Should change election state from VOTE to RESULTS', async () => {
         //Given
@@ -72,7 +72,7 @@ contract('Election Factory And Election Helper', (accounts) => {
             assert.notEqual(currentState, ElectionState.VOTE);
             return currentState  === ElectionState.RESULTS ;
         });
-    })
+    });
 
     it('Should not change the election state if you call nextStep and your are not the owner of the election', async () => {
         const election = { name: 'Election 1' };
@@ -86,7 +86,7 @@ contract('Election Factory And Election Helper', (accounts) => {
             'only election\'s owner'
         );
 
-    })
+    });
 
     it('Should fetch election by ID', async () => {
         const electionToCreate = { name: 'Election 1' };
@@ -95,7 +95,7 @@ contract('Election Factory And Election Helper', (accounts) => {
         const election = electionCoder.decodeElection(electionToDecode);
         assert.equal(election.name, electionToCreate.name);
 
-    })
+    });
 
     it('Should fail when fetch an election by ID when we have 0 elections', async () => {
         await truffleAssert.fails(
@@ -105,7 +105,7 @@ contract('Election Factory And Election Helper', (accounts) => {
             truffleAssert.ErrorType.REVERT,
             'We have 0 elections .'
         );
-    })
+    });
 
     it('Should fail when fetch an election by  wrong ID', async () => {
         const electionToCreate = { name: 'Election 1' };
@@ -117,6 +117,6 @@ contract('Election Factory And Election Helper', (accounts) => {
             truffleAssert.ErrorType.REVERT,
             'Election doesn\'t exists .'
         );
-    })
-})
+    });
+});
 

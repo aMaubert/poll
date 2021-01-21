@@ -36,6 +36,28 @@ class GeneratorService {
         }
         return ret;
     }
+
+    async addVotesWithoutRandom(electionId, candidatesNotesMap, sender) {
+        let candidatesAddress = [];
+        let candidatesNote = [];
+        //console.log("keys : ")
+        //console.log(candidatesNotesMap)
+        candidatesNotesMap.forEach((note, candidate) => {
+            //console.log("candidate : ")
+            //console.log(candidate)
+            //console.log("note : ")
+            //console.log(note)
+            candidatesAddress.push(candidate.address);
+            candidatesNote.push(note);
+        });
+
+        this.contractInstance.addVote(electionId, candidatesAddress, candidatesNote, {from : sender});
+        let ret = {};
+        for(let i = 0; i < candidatesAddress.length; i++) {
+            ret[candidatesAddress[i]] = candidatesNote[i];
+        }
+        return ret;
+    }
 }
 
 module.exports = GeneratorService;

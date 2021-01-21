@@ -6,7 +6,7 @@ contract('Poll contract', (accounts) => {
 
     beforeEach( async () => {
         contractInstance = await Poll.new();
-    })
+    });
 
     /*it('Divide(5,2,2) Should return 2,50', async () => {
         const result = await contractInstance.divide(5,2,2);

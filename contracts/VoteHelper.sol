@@ -6,7 +6,7 @@ import "./VoteFactory.sol";
 
 contract VoteHelper is VoteFactory {
 
-    enum LEVELS { Level1, Level2, Level3, Level4, Level5, Level6, Level7, Level8, Level9, Level10}
+    enum LEVELS {Level1, Level2, Level3, Level4, Level5, Level6, Level7, Level8, Level9, Level10}
 
     function allVotesByElectionID(uint256 electionID) public view returns(address[] memory, address[] memory, uint[] memory) {
         Election storage election = elections[electionID];
@@ -29,39 +29,90 @@ contract VoteHelper is VoteFactory {
         return (votersAddress, candidatesAddress, notes);
     }
 
+    function allNotesByElectionIDByCandidate(uint256 electionID, address candidate) public view returns(uint[] memory) {
+        Election storage election = elections[electionID];
 
-    //This function should return the election which the msg.sender has already voted
-    //TODO implement
-    function fetchParticipatedElections() public {
+        uint[] memory notes = new uint[](election.voteCount);
 
+        for(uint i = 0; i < election.voteCount; i++) {
+            Vote storage vote = election.votes[i];
+            notes[i] = vote.ballot[candidate];
+        }
+
+        return notes;
     }
 
+     function fetchMedianCandidates(uint electionId) public view returns(string[] memory, string[] memory, address[] memory, uint[] memory, uint[] memory) {
+        Election storage election = elections[electionId];
+        uint candidateCount = election.candidateCount;
 
-    //TODO implement this
-    function _computeLevel(uint8 note) private pure returns (LEVELS) {
-        return LEVELS.Level1;
+        string[] memory candidatesNames = new string[](candidateCount);
+        string[] memory candidatesFirstNames = new string[](candidateCount);
+        address[] memory candidatesAddresses = new address[](candidateCount);
+        uint[] memory mediansArray = new uint[](candidateCount);
+        uint[] memory averagesArray = new uint[](candidateCount);
+
+        for(uint i = 0; i < candidateCount; i++) {
+            candidatesAddresses[i] = election.candidates[i].candidateAddress;
+            candidatesNames[i] = election.candidates[i].name;
+            candidatesFirstNames[i] = election.candidates[i].firstName;
+
+            uint[] memory tmpNotesList = allNotesByElectionIDByCandidate(electionId, candidatesAddresses[i]);
+
+            quickSort(tmpNotesList, int(0), int(tmpNotesList.length - 1));
+
+            uint medianResult;
+            if (tmpNotesList.length % 2 == 0){
+                //moyenne de la note juste avant le milieu de la série et de la note juste après celle de la série
+                //-1 longeur de la série
+                //-2 => récupération de la note juste avant le milieu de la série
+                // 0 => récupération de la note juste après le milieu de la série
+                uint first = tmpNotesList[(tmpNotesList.length-2)/2]*100;
+                uint second = tmpNotesList[(tmpNotesList.length)/2]*100;
+                medianResult = (first + second)/2;
+            }
+            else{
+                medianResult = tmpNotesList[tmpNotesList.length/2]*100;
+            }
+
+            mediansArray[i] = medianResult;
+
+            uint sum = 0;
+            for(uint noteInd = 0; noteInd < tmpNotesList.length; noteInd++){
+                sum += tmpNotesList[noteInd];
+            }
+            sum = sum*100/tmpNotesList.length;
+            averagesArray[i] = sum;
+
+        }
+
+        return (candidatesNames, candidatesFirstNames, candidatesAddresses, mediansArray, averagesArray);
     }
 
-    //TODO implement this, Good luck
-    function fetchMedianCandidates(uint electionId) public {
-        //        medianCandidate = mapping(address => LEVELS)
-        //        for let candidate of election.candidates:
-        //
-        //            nbNotesByLevels = mapping(LEVELS => uint)
-        //            for let i = 0; i < elections.votes.length ; i++ :
-        //               note  = elections.votes[i].ballot[candidate.candidateAddress];
-        //               level = _computeLevel(note);
-        //               nbNotesByLevels[level] += 1
-        //
-        //            acc = 0
-        //            iterate each enum value of LEVELS :
-        //                acc += nbNotesByLevels[Level]
-        //                if acc / elections.votes.length >= 0.5 :
-        //                    medianCandidate[candidate.candidateAddress] = Level
-        //                    break
-        //        return medianCandidate
-        //
+    function quickSort(uint[] memory array, int left, int right) pure public {
+        int i = left;
+        int j = right;
+        if (i == j){
+            return;
+        }
+        uint pivot = array[uint(left + (right - left) / 2)];
+        while (i <= j){
+            while (array[uint(i)] < pivot) i++;
+            while (pivot < array[uint(j)]) j--;
+            if (i <= j){
+                (array[uint(i)], array[uint(j)]) = (array[uint(j)], array[uint(i)]);
+                i++;
+                j--;
+            }
+        }
+        if (left < j){
+            quickSort(array, left, j);
+        }
+        if (i < right){
+            quickSort(array, i, right);
+        }
     }
+
 
     function fetchElectionMsgSenderHasVoted() public view returns(uint256[] memory, string[] memory, ElectionState[] memory) {
 

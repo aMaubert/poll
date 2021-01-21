@@ -34,6 +34,31 @@ class ElectionCoder {
         return elections;
     }
 
+    decodeMediansList(input) {
+        console.log(input);
+        const names = input['0'];
+        const firstNames = input['1'];
+        const addresses = input['2'];
+        const medians = input['3'];
+        const averages = input['4'];
+
+
+        if (!Array.isArray(names) || !Array.isArray(firstNames) || !Array.isArray(addresses) || !Array.isArray(medians) || !Array.isArray(averages) ||
+            names.length !== firstNames.length || firstNames.length !== addresses.length || addresses.length !== medians.length || medians.length !== averages.length) {
+            throw new Error('Can\'t decode this input into result list .');
+        }
+
+
+        const results = [];
+        for(let i = 0; i < names.length; i++) {
+            const result = {name: names[i], firstName: firstNames[i], address: addresses[i], median: medians[i].toNumber()/100, average: averages[i].toNumber()/100};
+            results.push(result);
+        }
+
+        return results;
+    }
+
+
     decodeElection(input) {
         const id = input['0'];
         const name = input['1'];

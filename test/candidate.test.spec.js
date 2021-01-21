@@ -11,7 +11,7 @@ contract('Candidate Factory And Candidate Helper', (accounts) => {
     beforeEach( async () => {
         contractInstance = await Poll.new();
         generatorService = new GeneratorService(contractInstance);
-    })
+    });
 
     it('Should Add a candidate', async () => {
         const electionName = 'Election 1';
@@ -20,7 +20,7 @@ contract('Candidate Factory And Candidate Helper', (accounts) => {
         const candidate = {name: 'Maubert', firstName: 'Allan'};
         const addCandidateTransaction = await contractInstance.addCandidate(electionId, candidate.name, candidate.firstName, {from: alice});
         truffleAssert.eventEmitted(addCandidateTransaction, 'CandidateAdded', (event) => event.name === candidate.name && event.firstName === candidate.firstName );
-    })
+    });
 
     it('Should fail when you add a candidate to an election that is not in state APPLICATION', async () => {
         const electionName = 'Election 1';
@@ -35,7 +35,7 @@ contract('Candidate Factory And Candidate Helper', (accounts) => {
             truffleAssert.ErrorType.REVERT,
             'Can\'t apply to this election .'
         );
-    })
+    });
 
     it('Should Fetch all candidates of a given election ', async () => {
 
@@ -64,8 +64,6 @@ contract('Candidate Factory And Candidate Helper', (accounts) => {
 
         assert.equal(candidateVirginie.name, secondCandidate.name);
         assert.equal(candidateVirginie.firstName, secondCandidate.firstName);
-    })
+    });
 
-
-
-})
+});
