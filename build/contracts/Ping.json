@@ -1,0 +1,394 @@
+{
+  "contractName": "Ping",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "pingTest",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"pingTest\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/C/workspace/5ALBlockchain/poll/contracts/Ping.sol\":\"Ping\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/workspace/5ALBlockchain/poll/contracts/Ping.sol\":{\"keccak256\":\"0x93e2c57b30b4f895a6328dc32ca8a10f301bbe77686a8f58b6a7ae63cdc94230\",\"urls\":[\"bzz-raw://aa233d760845a278abeae39ba715bacaa16c21b06c432a1e50ce24d33acf2771\",\"dweb:/ipfs/Qmdhf7hFSbngbk55W3uFYrgayZJTwXmHosP9wrSk9bxqRj\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610122806100206000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c806307dc906c14602d575b600080fd5b603360ab565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101560715780820151818401526020810190506058565b50505050905090810190601f168015609d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6060806040518060400160405280600481526020017f506f6e67000000000000000000000000000000000000000000000000000000008152509050809150509056fea265627a7a72315820c37330de76ff271ea448c43253e5f0bc6c414e08c6104b9e80a913345ea7137664736f6c63430005100032",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c806307dc906c14602d575b600080fd5b603360ab565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101560715780820151818401526020810190506058565b50505050905090810190601f168015609d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6060806040518060400160405280600481526020017f506f6e67000000000000000000000000000000000000000000000000000000008152509050809150509056fea265627a7a72315820c37330de76ff271ea448c43253e5f0bc6c414e08c6104b9e80a913345ea7137664736f6c63430005100032",
+  "sourceMap": "36:153:4:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;36:153:4;;;;;;;",
+  "deployedSourceMap": "36:153:4:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;36:153:4;;;;;;;;;;;;;;;;;;;59:125;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;59:125:4;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;100:13;126:18;:28;;;;;;;;;;;;;;;;;;;172:4;165:11;;;59:125;:::o",
+  "source": "pragma solidity >=0.4.22 <0.8.0;\r\n\r\ncontract Ping {\r\n\r\n    function pingTest() public pure returns (string memory) {\r\n        string memory pong =  \"Pong\";\r\n        return pong;\r\n    }\r\n\r\n}\r\n",
+  "sourcePath": "C:\\workspace\\5ALBlockchain\\poll\\contracts\\Ping.sol",
+  "ast": {
+    "absolutePath": "/C/workspace/5ALBlockchain/poll/contracts/Ping.sol",
+    "exportedSymbols": {
+      "Ping": [
+        434
+      ]
+    },
+    "id": 435,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 421,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".22",
+          "<",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:32:4"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 434,
+        "linearizedBaseContracts": [
+          434
+        ],
+        "name": "Ping",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 432,
+              "nodeType": "Block",
+              "src": "115:69:4",
+              "statements": [
+                {
+                  "assignments": [
+                    427
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 427,
+                      "name": "pong",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 432,
+                      "src": "126:18:4",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_memory_ptr",
+                        "typeString": "string"
+                      },
+                      "typeName": {
+                        "id": 426,
+                        "name": "string",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "126:6:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_storage_ptr",
+                          "typeString": "string"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 429,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "hexValue": "506f6e67",
+                    "id": 428,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "string",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "148:6:4",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_stringliteral_e25b877c2e736b181fe3b2eee09f503445dc269eeda30c762cea7fef3fca981d",
+                      "typeString": "literal_string \"Pong\""
+                    },
+                    "value": "Pong"
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "126:28:4"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 430,
+                    "name": "pong",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 427,
+                    "src": "172:4:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_memory_ptr",
+                      "typeString": "string memory"
+                    }
+                  },
+                  "functionReturnParameters": 425,
+                  "id": 431,
+                  "nodeType": "Return",
+                  "src": "165:11:4"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 433,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "pingTest",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 422,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "76:2:4"
+            },
+            "returnParameters": {
+              "id": 425,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 424,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 433,
+                  "src": "100:13:4",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 423,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "100:6:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "99:15:4"
+            },
+            "scope": 434,
+            "src": "59:125:4",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 435,
+        "src": "36:153:4"
+      }
+    ],
+    "src": "0:191:4"
+  },
+  "legacyAST": {
+    "absolutePath": "/C/workspace/5ALBlockchain/poll/contracts/Ping.sol",
+    "exportedSymbols": {
+      "Ping": [
+        434
+      ]
+    },
+    "id": 435,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 421,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.4",
+          ".22",
+          "<",
+          "0.8",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:32:4"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 434,
+        "linearizedBaseContracts": [
+          434
+        ],
+        "name": "Ping",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 432,
+              "nodeType": "Block",
+              "src": "115:69:4",
+              "statements": [
+                {
+                  "assignments": [
+                    427
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 427,
+                      "name": "pong",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 432,
+                      "src": "126:18:4",
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_string_memory_ptr",
+                        "typeString": "string"
+                      },
+                      "typeName": {
+                        "id": 426,
+                        "name": "string",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "126:6:4",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_string_storage_ptr",
+                          "typeString": "string"
+                        }
+                      },
+                      "value": null,
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 429,
+                  "initialValue": {
+                    "argumentTypes": null,
+                    "hexValue": "506f6e67",
+                    "id": 428,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "string",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "148:6:4",
+                    "subdenomination": null,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_stringliteral_e25b877c2e736b181fe3b2eee09f503445dc269eeda30c762cea7fef3fca981d",
+                      "typeString": "literal_string \"Pong\""
+                    },
+                    "value": "Pong"
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "126:28:4"
+                },
+                {
+                  "expression": {
+                    "argumentTypes": null,
+                    "id": 430,
+                    "name": "pong",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 427,
+                    "src": "172:4:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_memory_ptr",
+                      "typeString": "string memory"
+                    }
+                  },
+                  "functionReturnParameters": 425,
+                  "id": 431,
+                  "nodeType": "Return",
+                  "src": "165:11:4"
+                }
+              ]
+            },
+            "documentation": null,
+            "id": 433,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "pingTest",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 422,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "76:2:4"
+            },
+            "returnParameters": {
+              "id": 425,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 424,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 433,
+                  "src": "100:13:4",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 423,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "100:6:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "99:15:4"
+            },
+            "scope": 434,
+            "src": "59:125:4",
+            "stateMutability": "pure",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 435,
+        "src": "36:153:4"
+      }
+    ],
+    "src": "0:191:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.2",
+  "updatedAt": "2021-01-24T15:08:42.244Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
